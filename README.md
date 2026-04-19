@@ -1,0 +1,84 @@
+# Stitch Multi-Agent Claim Processing Pipeline
+
+A React frontend for a medical claim processing workflow. This app interfaces with a backend API to upload PDF claims, run LangGraph-based claim extraction, review results, manage pipeline status, and update system settings.
+
+## Features
+
+- Upload insurance claim PDFs and initialize processing
+- Review extracted claim fields and manually update results
+- Approve claims and export processed claims as PDF
+- Monitor pipeline execution status and logs
+- View dashboard summary metrics
+- Configure system settings via the backend API
+- Check API health and workflow metadata
+
+## Tech Stack
+
+- React 18
+- Vite
+- Tailwind CSS
+- React Router
+
+## Setup
+
+1. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+2. Create or update `.env` with the backend API base URL:
+   ```bash
+   VITE_API_BASE_URL=http://127.0.0.1:8000
+   ```
+
+3. Start the frontend server:
+   ```bash
+   npm run dev
+   ```
+
+4. Open the application in your browser at the port shown by Vite.
+
+## Available Scripts
+
+- `npm run dev` — start the local development server
+- `npm run build` — build the production bundle
+- `npm run preview` — preview the production build locally
+- `npm run lint` — run ESLint checks
+
+## API Endpoints Used
+
+The frontend integrates with the following backend endpoints:
+
+- `GET /health`
+- `GET /api/workflow-info`
+- `POST /api/process?claim_id=...` (upload claim PDF)
+- `GET /api/claims/summary`
+- `GET /api/claims/{claimId}`
+- `GET /api/claims/{claimId}/extraction-results`
+- `PUT /api/claims/{claimId}/extraction-results`
+- `GET /api/claims/{claimId}/document-breakdown`
+- `GET /api/claims/{claimId}/history`
+- `GET /api/dashboard/metrics`
+- `POST /api/claims/{claimId}/approve`
+- `POST /api/claims/{claimId}/export`
+- `GET /api/pipeline/status/{claimId}`
+- `GET /api/pipeline/logs/{claimId}`
+- `POST /api/pipeline/pause/{claimId}`
+- `POST /api/pipeline/restart/{claimId}`
+- `GET /api/settings/configuration`
+- `PUT /api/settings/configuration`
+
+## Project Structure
+
+- `src/App.jsx` — routes and page layout
+- `src/api/claimApi.js` — backend API wrappers
+- `src/components/ClaimDashboard.jsx` — claim upload and summary
+- `src/components/ReviewExtractionResults.jsx` — review and edit extraction results
+- `src/components/ClaimPrecisionMedicalBillingPipeline.jsx` — pipeline status and controls
+- `src/components/AIPipelineStatus.jsx` — API health and workflow metadata
+- `src/components/PipelineSettings.jsx` — settings management
+
+## Notes
+
+- The frontend is configured to proxy API requests via Vite to the backend base URL.
+- Ensure the backend is running and reachable at `VITE_API_BASE_URL` before using the app.

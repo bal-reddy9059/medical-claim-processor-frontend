@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ClaimPrecision Settings</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "secondary-fixed-dim": "#afcbd8",
+                    "secondary-container": "#cbe7f5",
+                    "on-primary-fixed": "#001b3d",
+                    "outline-variant": "#c2c6d4",
+                    "surface-tint": "#005db5",
+                    "primary-container": "#005fb8",
+                    "inverse-on-surface": "#eff1f3",
+                    "on-error": "#ffffff",
+                    "surface-container-low": "#f2f4f6",
+                    "on-primary-container": "#cadcff",
+                    "primary-fixed-dim": "#a8c8ff",
+                    "on-tertiary-fixed-variant": "#783100",
+                    "primary-fixed": "#d6e3ff",
+                    "tertiary-fixed": "#ffdbcb",
+                    "surface-container-lowest": "#ffffff",
+                    "on-tertiary-fixed": "#341100",
+                    "tertiary-container": "#a04401",
+                    "secondary-fixed": "#cbe7f5",
+                    "surface-bright": "#f7f9fb",
+                    "surface-dim": "#d8dadc",
+                    "on-background": "#191c1e",
+                    "error-container": "#ffdad6",
+                    "surface-container-highest": "#e0e3e5",
+                    "inverse-surface": "#2d3133",
+                    "on-secondary-fixed-variant": "#304a55",
+                    "on-surface-variant": "#424752",
+                    "on-error-container": "#93000a",
+                    "primary": "#00488d",
+                    "surface": "#f7f9fb",
+                    "background": "#f7f9fb",
+                    "on-secondary-fixed": "#021f29",
+                    "on-surface": "#191c1e",
+                    "on-secondary": "#ffffff",
+                    "surface-container": "#eceef0",
+                    "surface-variant": "#e0e3e5",
+                    "outline": "#727783",
+                    "on-primary": "#ffffff",
+                    "error": "#ba1a1a",
+                    "tertiary-fixed-dim": "#ffb691",
+                    "tertiary": "#7b3200",
+                    "inverse-primary": "#a8c8ff",
+                    "surface-container-high": "#e6e8ea",
+                    "on-secondary-container": "#4e6874",
+                    "on-tertiary-container": "#ffd1bc",
+                    "secondary": "#48626e",
+                    "on-primary-fixed-variant": "#00468b",
+                    "on-tertiary": "#ffffff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "fontFamily": {
+                    "headline": ["Inter"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #f7f9fb; color: #191c1e; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface min-h-screen pb-24">
+<!-- TopAppBar -->
+<header class="fixed top-0 left-0 w-full z-50 bg-[#f7f9fb] dark:bg-slate-900 flex justify-between items-center w-full px-6 py-3 shadow-none">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[#005fb8] dark:text-blue-400" data-icon="medical_services">medical_services</span>
+<h1 class="text-lg font-black tracking-tighter text-[#00488d] dark:text-blue-300 uppercase">ClaimPrecision</h1>
+</div>
+<div class="flex items-center gap-6">
+<nav class="hidden md:flex gap-8">
+<a class="text-[#424752] dark:text-slate-400 font-['Inter'] tracking-[-0.02em] font-bold hover:bg-[#e0e3e5] dark:hover:bg-slate-700 transition-colors px-2 py-1 rounded-lg" href="#">Dashboard</a>
+<a class="text-[#424752] dark:text-slate-400 font-['Inter'] tracking-[-0.02em] font-bold hover:bg-[#e0e3e5] dark:hover:bg-slate-700 transition-colors px-2 py-1 rounded-lg" href="#">Workflow</a>
+<a class="text-[#424752] dark:text-slate-400 font-['Inter'] tracking-[-0.02em] font-bold hover:bg-[#e0e3e5] dark:hover:bg-slate-700 transition-colors px-2 py-1 rounded-lg" href="#">Review</a>
+<a class="text-[#00488d] dark:text-blue-400 font-['Inter'] tracking-[-0.02em] font-bold px-2 py-1" href="#">Settings</a>
+</nav>
+<div class="w-8 h-8 rounded-full bg-surface-container-highest flex items-center justify-center overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="close-up portrait of a professional man in a clinical setting with soft natural lighting and a neutral background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDRlXT0ZIW5sIUq_jaqSE3ltI7wY-E9H06fwaDHF7-iQzaSsM84oGaQ_Qkwj_iTYSZKVEpmRetIrnk0gWoBODI0Qip-7GD-_WA1tQ6MWWKgBtGQS7IORUtFrIV46pL9_fkS_RBii8gFO-haCB0n86VmciNYCpDaCwDpxgpS-EQN9Hi0hteXRm0TpBEeOnXpOVe2aOQH-yQsDg-kCQFRbTckK_N5MvEODLyxVmsHL6HmlleeaZPMuijdlfKcOonUvmMMzXvkBh9a1Xc"/>
+</div>
+</div>
+</header>
+<main class="pt-24 px-6 max-w-4xl mx-auto">
+<!-- Editorial Header -->
+<div class="mb-12">
+<p class="text-on-surface-variant font-label text-[10px] font-medium tracking-[0.05em] uppercase mb-2">Configuration Hub</p>
+<h2 class="text-4xl font-extrabold tracking-[-0.02em] text-on-surface">System Settings</h2>
+<div class="h-1 w-12 bg-primary mt-4 rounded-full"></div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- Left Column: Navigation/Context -->
+<div class="md:col-span-1 space-y-4">
+<div class="bg-surface-container-low p-6 rounded-xl">
+<h3 class="font-bold text-sm uppercase tracking-wider text-on-surface-variant mb-4">Categories</h3>
+<ul class="space-y-2">
+<li><a class="flex items-center gap-3 p-3 rounded-xl bg-surface-container-lowest text-primary shadow-sm" href="#"><span class="material-symbols-outlined text-[20px]" data-icon="psychology">psychology</span><span class="font-semibold text-sm">AI Configuration</span></a></li>
+<li><a class="flex items-center gap-3 p-3 rounded-xl text-on-surface-variant hover:bg-surface-container-highest transition-colors" href="#"><span class="material-symbols-outlined text-[20px]" data-icon="api">api</span><span class="font-medium text-sm">API Integration</span></a></li>
+<li><a class="flex items-center gap-3 p-3 rounded-xl text-on-surface-variant hover:bg-surface-container-highest transition-colors" href="#"><span class="material-symbols-outlined text-[20px]" data-icon="security">security</span><span class="font-medium text-sm">Security &amp; Privacy</span></a></li>
+<li><a class="flex items-center gap-3 p-3 rounded-xl text-on-surface-variant hover:bg-surface-container-highest transition-colors" href="#"><span class="material-symbols-outlined text-[20px]" data-icon="notifications">notifications</span><span class="font-medium text-sm">Alerts</span></a></li>
+</ul>
+</div>
+<a class="block bg-secondary-container p-6 rounded-xl hover:opacity-90 transition-all border border-outline-variant/20" href="#">
+<div class="flex items-center gap-3 mb-2">
+<span class="material-symbols-outlined text-on-secondary-container" data-icon="menu_book">menu_book</span>
+<h4 class="font-bold text-on-secondary-container text-sm">Documentation</h4>
+</div>
+<p class="text-xs text-on-secondary-container/80 leading-relaxed">Read our comprehensive guide on ClaimPrecision logic and API architecture.</p>
+</a>
+</div>
+<!-- Right Column: Form Sections -->
+<div class="md:col-span-2 space-y-6">
+<!-- AI Agent Sensitivity -->
+<section class="bg-surface-container-lowest p-8 rounded-xl shadow-[0_12px_32px_-4px_rgba(25,28,30,0.06)]">
+<div class="flex items-center gap-4 mb-8">
+<div class="p-3 bg-primary-fixed text-on-primary-fixed rounded-xl">
+<span class="material-symbols-outlined" data-icon="bolt">bolt</span>
+</div>
+<div>
+<h3 class="text-xl font-bold tracking-tight">AI Agent Sensitivity</h3>
+<p class="text-sm text-on-surface-variant">Adjust how strictly the AI flags potential claim discrepancies.</p>
+</div>
+</div>
+<div class="space-y-8">
+<!-- Sensitivity Toggle 1 -->
+<div class="flex items-center justify-between">
+<div>
+<p class="font-semibold text-on-surface">Strict Validation</p>
+<p class="text-xs text-on-surface-variant">Flags claims with any missing non-critical metadata.</p>
+</div>
+<button class="w-12 h-6 bg-primary rounded-full relative p-1 flex items-center justify-end">
+<div class="w-4 h-4 bg-white rounded-full"></div>
+</button>
+</div>
+<!-- Sensitivity Slider Concept (Tonal Bar) -->
+<div>
+<div class="flex justify-between mb-4">
+<span class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Confidence Threshold</span>
+<span class="text-[10px] font-bold text-primary">85% REQUIRED</span>
+</div>
+<div class="h-2 w-full bg-surface-container-highest rounded-full overflow-hidden flex">
+<div class="h-full bg-primary w-[85%]"></div>
+</div>
+</div>
+<div class="flex items-center justify-between">
+<div>
+<p class="font-semibold text-on-surface">Anomaly Detection</p>
+<p class="text-xs text-on-surface-variant">Prioritize high-value discrepancies over volume.</p>
+</div>
+<button class="w-12 h-6 bg-surface-container-highest rounded-full relative p-1 flex items-center justify-start">
+<div class="w-4 h-4 bg-white rounded-full shadow-sm"></div>
+</button>
+</div>
+</div>
+</section>
+<!-- API Configuration -->
+<section class="bg-surface-container-lowest p-8 rounded-xl shadow-[0_12px_32px_-4px_rgba(25,28,30,0.06)]">
+<div class="flex items-center gap-4 mb-8">
+<div class="p-3 bg-secondary-fixed text-on-secondary-fixed rounded-xl">
+<span class="material-symbols-outlined" data-icon="link">link</span>
+</div>
+<div>
+<h3 class="text-xl font-bold tracking-tight">API Integration</h3>
+<p class="text-sm text-on-surface-variant">Configure your production endpoint for live data ingestion.</p>
+</div>
+</div>
+<div class="space-y-6">
+<div class="group">
+<label class="block text-[10px] font-bold uppercase tracking-[0.05em] text-on-surface-variant mb-2">Live API URL</label>
+<div class="relative">
+<input class="w-full bg-surface-container-highest border-0 border-b-2 border-transparent focus:border-primary focus:ring-0 rounded-t-xl px-4 py-4 text-sm font-medium transition-all" placeholder="https://api.claimprecision.com/v1/ingest" type="text" value="https://api.healthcare-node.cloud/claims/secure-endpoint"/>
+<span class="material-symbols-outlined absolute right-4 top-4 text-on-surface-variant text-sm" data-icon="lock">lock</span>
+</div>
+</div>
+<div class="p-4 bg-surface-container-low rounded-xl flex items-start gap-4">
+<span class="material-symbols-outlined text-tertiary mt-1" data-icon="info">info</span>
+<p class="text-xs text-on-surface-variant leading-relaxed">Changes to the API URL require a re-authentication of your organization's security certificate. This may cause a brief interruption in service.</p>
+</div>
+</div>
+</section>
+<!-- Save Actions -->
+<div class="flex items-center justify-end gap-4 pt-4">
+<button class="px-6 py-2.5 text-sm font-bold uppercase tracking-widest text-on-surface-variant hover:bg-surface-container-high rounded-xl transition-all">Discard Changes</button>
+<button class="px-8 py-2.5 text-sm font-bold uppercase tracking-widest text-white bg-gradient-to-br from-primary to-primary-container rounded-xl shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all">Save System Configuration</button>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 bg-[#ffffff] dark:bg-slate-950 flex justify-around items-center px-4 py-3 pb-safe border-t border-[#c2c6d4]/20 shadow-[0_-4px_20px_-4px_rgba(25,28,30,0.06)]">
+<div class="flex flex-col items-center justify-center text-[#424752] dark:text-slate-400 px-4 py-1.5 transition-all duration-300 ease-in-out hover:bg-[#f2f4f6] dark:hover:bg-slate-800 rounded-xl">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-['Inter'] text-[10px] font-medium tracking-[0.05em] uppercase mt-1">Dashboard</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#424752] dark:text-slate-400 px-4 py-1.5 transition-all duration-300 ease-in-out hover:bg-[#f2f4f6] dark:hover:bg-slate-800 rounded-xl">
+<span class="material-symbols-outlined" data-icon="account_tree">account_tree</span>
+<span class="font-['Inter'] text-[10px] font-medium tracking-[0.05em] uppercase mt-1">Workflow</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#424752] dark:text-slate-400 px-4 py-1.5 transition-all duration-300 ease-in-out hover:bg-[#f2f4f6] dark:hover:bg-slate-800 rounded-xl">
+<span class="material-symbols-outlined" data-icon="rule">rule</span>
+<span class="font-['Inter'] text-[10px] font-medium tracking-[0.05em] uppercase mt-1">Review</span>
+</div>
+<div class="flex flex-col items-center justify-center bg-gradient-to-br from-[#00488d] to-[#005fb8] text-white rounded-xl px-4 py-1.5 transition-all duration-300 ease-in-out">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-['Inter'] text-[10px] font-medium tracking-[0.05em] uppercase mt-1">Settings</span>
+</div>
+</nav>
+</body></html>

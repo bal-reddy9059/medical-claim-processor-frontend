@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>ClaimPrecision Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "secondary-fixed-dim": "#afcbd8",
+                    "secondary-container": "#cbe7f5",
+                    "on-primary-fixed": "#001b3d",
+                    "outline-variant": "#c2c6d4",
+                    "surface-tint": "#005db5",
+                    "primary-container": "#005fb8",
+                    "inverse-on-surface": "#eff1f3",
+                    "on-error": "#ffffff",
+                    "surface-container-low": "#f2f4f6",
+                    "on-primary-container": "#cadcff",
+                    "primary-fixed-dim": "#a8c8ff",
+                    "on-tertiary-fixed-variant": "#783100",
+                    "primary-fixed": "#d6e3ff",
+                    "tertiary-fixed": "#ffdbcb",
+                    "surface-container-lowest": "#ffffff",
+                    "on-tertiary-fixed": "#341100",
+                    "tertiary-container": "#a04401",
+                    "secondary-fixed": "#cbe7f5",
+                    "surface-bright": "#f7f9fb",
+                    "surface-dim": "#d8dadc",
+                    "on-background": "#191c1e",
+                    "error-container": "#ffdad6",
+                    "surface-container-highest": "#e0e3e5",
+                    "inverse-surface": "#2d3133",
+                    "on-secondary-fixed-variant": "#304a55",
+                    "on-surface-variant": "#424752",
+                    "on-error-container": "#93000a",
+                    "primary": "#00488d",
+                    "surface": "#f7f9fb",
+                    "background": "#f7f9fb",
+                    "on-secondary-fixed": "#021f29",
+                    "on-surface": "#191c1e",
+                    "on-secondary": "#ffffff",
+                    "surface-container": "#eceef0",
+                    "surface-variant": "#e0e3e5",
+                    "outline": "#727783",
+                    "on-primary": "#ffffff",
+                    "error": "#ba1a1a",
+                    "tertiary-fixed-dim": "#ffb691",
+                    "tertiary": "#7b3200",
+                    "inverse-primary": "#a8c8ff",
+                    "surface-container-high": "#e6e8ea",
+                    "on-secondary-container": "#4e6874",
+                    "on-tertiary-container": "#ffd1bc",
+                    "secondary": "#48626e",
+                    "on-primary-fixed-variant": "#00468b",
+                    "on-tertiary": "#ffffff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "fontFamily": {
+                    "headline": ["Inter"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+      body { font-family: 'Inter', sans-serif; }
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      .glass-effect {
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(12px);
+      }
+      .input-underline {
+        position: relative;
+      }
+      .input-underline::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        width: 0;
+        height: 2px;
+        background: #00488d;
+        transition: all 0.3s ease;
+        transform: translateX(-50%);
+      }
+      .input-underline:focus-within::after {
+        width: 100%;
+      }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface min-h-screen">
+<!-- TopAppBar -->
+<header class="bg-[#f7f9fb] dark:bg-slate-900 shadow-none flex justify-between items-center w-full px-6 py-3 sticky top-0 z-40">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[#005fb8] dark:text-blue-400" style="font-variation-settings: 'FILL' 1;">medical_services</span>
+<h1 class="text-lg font-black tracking-tighter text-[#00488d] dark:text-blue-300 uppercase">ClaimPrecision</h1>
+</div>
+<nav class="hidden md:flex gap-8 items-center">
+<a class="text-[#00488d] dark:text-blue-400 font-bold font-['Inter'] tracking-[-0.02em]" href="#">Dashboard</a>
+<a class="text-[#424752] dark:text-slate-400 hover:bg-[#e0e3e5] dark:hover:bg-slate-700 transition-colors px-3 py-1 rounded-xl" href="#">Workflow</a>
+<a class="text-[#424752] dark:text-slate-400 hover:bg-[#e0e3e5] dark:hover:bg-slate-700 transition-colors px-3 py-1 rounded-xl" href="#">Review</a>
+<a class="text-[#424752] dark:text-slate-400 hover:bg-[#e0e3e5] dark:hover:bg-slate-700 transition-colors px-3 py-1 rounded-xl" href="#">Settings</a>
+</nav>
+<div class="flex items-center gap-4">
+<div class="w-8 h-8 rounded-full overflow-hidden bg-surface-container-highest">
+<img alt="Profile" class="w-full h-full object-cover" data-alt="professional portrait of a medical administrator in a clean modern office setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBWb5xAs5W7qXxUyAoRH5y3YW_Znytn17fISYFj-vhr_Y82XnoKBnhK7I8W0eSDeEtV6aWcO9lkDOj3EiA03J7VRmn2YG2WHzxlJ3R0XVKr85--vM6Sf30gkaZ_HjrF8aYclehga6J7xnZZiBdz-UkD_BDjDKTDvjya9POric29jQ1vnKoQfbhqDhxsbEU8xYsoFQkUmokYCgWZY5QsqfBMkSwCkKJBkAq5hQaQqv1715BzVAG6h4eb9bwOV3V0Fep7GD0KF-c43Xk"/>
+</div>
+</div>
+</header>
+<main class="max-w-7xl mx-auto px-6 py-10 space-y-10">
+<!-- Dashboard Summary Row -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="col-span-1 md:col-span-2 space-y-2">
+<h2 class="text-4xl font-extrabold tracking-[-0.02em] text-on-surface">Pipeline Overview</h2>
+<p class="text-on-surface-variant body-md">Manage and monitor the clinical precision of your medical claim flows.</p>
+</div>
+<div class="bg-surface-container-low rounded-xl p-4 flex items-center justify-between">
+<div>
+<p class="text-xs font-bold uppercase tracking-widest text-on-surface-variant">Active Pipelines</p>
+<p class="text-3xl font-black text-primary">24</p>
+</div>
+<div class="h-12 w-1.5 bg-primary rounded-full"></div>
+</div>
+</section>
+<!-- Main Bento Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+<!-- Upload Area (Action Layer) -->
+<section class="lg:col-span-5 bg-surface-container-lowest rounded-xl p-8 shadow-[0_12px_32px_-4px_rgba(25,28,30,0.06)] space-y-8">
+<div class="space-y-1">
+<h3 class="text-xl font-bold tracking-tight">Upload New Claim</h3>
+<p class="text-sm text-on-surface-variant">Initiate a new precision processing sequence.</p>
+</div>
+<div class="group relative flex flex-col items-center justify-center border-2 border-dashed border-outline-variant/30 bg-surface-container-low rounded-full p-12 transition-all hover:bg-gradient-to-br hover:from-primary-fixed hover:to-surface-container cursor-pointer">
+<span class="material-symbols-outlined text-surface-tint text-5xl mb-4">picture_as_pdf</span>
+<p class="text-label-md font-bold text-primary uppercase tracking-wider">Select PDF Claim</p>
+<p class="text-xs text-on-surface-variant mt-1">or drag and drop here</p>
+</div>
+<div class="space-y-6">
+<div class="input-underline">
+<label class="block text-[10px] font-medium tracking-[0.05em] uppercase text-on-surface-variant mb-1" for="claim_id">Claim ID</label>
+<input class="w-full bg-surface-container-highest border-none rounded-t-lg py-3 px-4 focus:ring-0 text-on-surface placeholder:text-outline" id="claim_id" placeholder="e.g. CLM-99203-PX" type="text"/>
+</div>
+<button class="w-full bg-gradient-to-br from-primary to-primary-container text-white py-4 rounded-xl font-bold uppercase tracking-widest text-sm shadow-md active:scale-95 transition-all">
+                        Initialize Pipeline
+                    </button>
+</div>
+</section>
+<!-- Recent Pipelines (Data Tables) -->
+<section class="lg:col-span-7 space-y-6">
+<div class="flex items-center justify-between px-2">
+<h3 class="text-xl font-bold tracking-tight">Recent Pipelines</h3>
+<button class="text-primary font-bold text-sm flex items-center gap-1 hover:underline">
+                        View All <span class="material-symbols-outlined text-sm">arrow_forward</span>
+</button>
+</div>
+<div class="overflow-hidden bg-surface-container-lowest rounded-xl shadow-[0_12px_32px_-4px_rgba(25,28,30,0.06)]">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-high">
+<th class="py-4 px-6 text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Claim ID</th>
+<th class="py-4 px-6 text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Status</th>
+<th class="py-4 px-6 text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Date</th>
+<th class="py-4 px-6"></th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/10">
+<tr class="hover:bg-secondary-container/30 transition-colors group">
+<td class="py-5 px-6">
+<span class="font-mono font-bold text-on-surface">CLM-88210-TQ</span>
+</td>
+<td class="py-5 px-6">
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-primary-fixed-dim animate-pulse"></div>
+<span class="text-sm font-medium text-primary">Processing</span>
+</div>
+</td>
+<td class="py-5 px-6 text-sm text-on-surface-variant">Oct 24, 2023</td>
+<td class="py-5 px-6 text-right">
+<span class="material-symbols-outlined text-outline opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">more_vert</span>
+</td>
+</tr>
+<tr class="hover:bg-secondary-container/30 transition-colors group">
+<td class="py-5 px-6">
+<span class="font-mono font-bold text-on-surface">CLM-77104-AB</span>
+</td>
+<td class="py-5 px-6">
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-green-500"></div>
+<span class="text-sm font-medium text-on-surface">Completed</span>
+</div>
+</td>
+<td class="py-5 px-6 text-sm text-on-surface-variant">Oct 23, 2023</td>
+<td class="py-5 px-6 text-right">
+<span class="material-symbols-outlined text-outline opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">more_vert</span>
+</td>
+</tr>
+<tr class="hover:bg-secondary-container/30 transition-colors group">
+<td class="py-5 px-6">
+<span class="font-mono font-bold text-on-surface">CLM-99002-XC</span>
+</td>
+<td class="py-5 px-6">
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-tertiary"></div>
+<span class="text-sm font-medium text-tertiary">Flagged</span>
+</div>
+</td>
+<td class="py-5 px-6 text-sm text-on-surface-variant">Oct 23, 2023</td>
+<td class="py-5 px-6 text-right">
+<span class="material-symbols-outlined text-outline opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">more_vert</span>
+</td>
+</tr>
+<tr class="hover:bg-secondary-container/30 transition-colors group">
+<td class="py-5 px-6">
+<span class="font-mono font-bold text-on-surface">CLM-88122-LL</span>
+</td>
+<td class="py-5 px-6">
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-green-500"></div>
+<span class="text-sm font-medium text-on-surface">Completed</span>
+</div>
+</td>
+<td class="py-5 px-6 text-sm text-on-surface-variant">Oct 22, 2023</td>
+<td class="py-5 px-6 text-right">
+<span class="material-symbols-outlined text-outline opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">more_vert</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Tonal Bar Progress (System Component) -->
+<div class="bg-surface-container-low rounded-xl p-6">
+<p class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-4">Batch Processing Efficiency</p>
+<div class="flex items-center h-2 w-full rounded-full overflow-hidden bg-surface-container-highest">
+<div class="h-full bg-primary" style="width: 45%;"></div>
+<div class="h-full bg-primary-fixed-dim" style="width: 30%;"></div>
+<div class="h-full bg-surface-container-highest" style="width: 25%;"></div>
+</div>
+<div class="flex justify-between mt-3">
+<span class="text-[10px] font-bold text-primary uppercase">Validated (45%)</span>
+<span class="text-[10px] font-bold text-on-primary-fixed-variant uppercase">Analyzing (30%)</span>
+<span class="text-[10px] font-bold text-on-surface-variant uppercase">Pending (25%)</span>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-3 pb-safe bg-[#ffffff] dark:bg-slate-950 border-t border-[#c2c6d4]/20 shadow-[0_-4px_20px_-4px_rgba(25,28,30,0.06)]">
+<div class="flex flex-col items-center justify-center bg-gradient-to-br from-[#00488d] to-[#005fb8] text-white rounded-xl px-4 py-1.5 transition-all duration-300 ease-in-out">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+<span class="font-['Inter'] text-[10px] font-medium tracking-[0.05em] uppercase mt-1">Dashboard</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#424752] dark:text-slate-400 px-4 py-1.5 hover:bg-[#f2f4f6] dark:hover:bg-slate-800 rounded-xl transition-all duration-300 ease-in-out">
+<span class="material-symbols-outlined">account_tree</span>
+<span class="font-['Inter'] text-[10px] font-medium tracking-[0.05em] uppercase mt-1">Workflow</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#424752] dark:text-slate-400 px-4 py-1.5 hover:bg-[#f2f4f6] dark:hover:bg-slate-800 rounded-xl transition-all duration-300 ease-in-out">
+<span class="material-symbols-outlined">rule</span>
+<span class="font-['Inter'] text-[10px] font-medium tracking-[0.05em] uppercase mt-1">Review</span>
+</div>
+<div class="flex flex-col items-center justify-center text-[#424752] dark:text-slate-400 px-4 py-1.5 hover:bg-[#f2f4f6] dark:hover:bg-slate-800 rounded-xl transition-all duration-300 ease-in-out">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-['Inter'] text-[10px] font-medium tracking-[0.05em] uppercase mt-1">Settings</span>
+</div>
+</nav>
+<!-- FAB (Dashboard Contextual Only) -->
+<div class="fixed bottom-24 right-6 md:bottom-8 md:right-8 z-50">
+<button class="w-14 h-14 bg-gradient-to-br from-primary to-primary-container text-white rounded-full flex items-center justify-center shadow-xl hover:scale-105 active:scale-95 transition-all">
+<span class="material-symbols-outlined text-3xl">add</span>
+</button>
+</div>
+</body></html>

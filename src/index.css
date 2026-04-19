@@ -1,0 +1,91 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --color-secondary-fixed-dim: #afcbd8;
+    --color-secondary-container: #cbe7f5;
+    --color-on-primary-fixed: #001b3d;
+    --color-outline-variant: #c2c6d4;
+    --color-surface-tint: #005db5;
+    --color-primary-container: #005fb8;
+    --color-inverse-on-surface: #eff1f3;
+    --color-on-error: #ffffff;
+    --color-surface-container-low: #f2f4f6;
+    --color-on-primary-container: #cadcff;
+    --color-primary-fixed-dim: #a8c8ff;
+    --color-on-tertiary-fixed-variant: #783100;
+    --color-primary-fixed: #d6e3ff;
+    --color-tertiary-fixed: #ffdbcb;
+    --color-surface-container-lowest: #ffffff;
+    --color-on-tertiary-fixed: #341100;
+    --color-tertiary-container: #a04401;
+    --color-secondary-fixed: #cbe7f5;
+    --color-surface-bright: #f7f9fb;
+    --color-surface-dim: #d8dadc;
+    --color-on-background: #191c1e;
+    --color-error-container: #ffdad6;
+    --color-surface-container-highest: #e0e3e5;
+    --color-inverse-surface: #2d3133;
+    --color-on-secondary-fixed-variant: #304a55;
+    --color-on-surface-variant: #424752;
+    --color-on-error-container: #93000a;
+    --color-primary: #00488d;
+    --color-surface: #f7f9fb;
+    --color-background: #f7f9fb;
+    --color-on-secondary-fixed: #021f29;
+    --color-on-surface: #191c1e;
+    --color-on-secondary: #ffffff;
+    --color-surface-container: #eceef0;
+  }
+
+  html {
+    min-height: 100%;
+  }
+
+  body {
+    min-height: 100%;
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    background-color: var(--color-background);
+    color: var(--color-on-surface);
+  }
+}
+
+@layer utilities {
+  .text-secondary-fixed-dim { color: var(--color-secondary-fixed-dim); }
+  .bg-secondary-container { background-color: var(--color-secondary-container); }
+  .text-on-primary-fixed { color: var(--color-on-primary-fixed); }
+  .border-outline-variant { border-color: var(--color-outline-variant); }
+  .text-surface-tint { color: var(--color-surface-tint); }
+  .bg-primary-container { background-color: var(--color-primary-container); }
+  .text-inverse-on-surface { color: var(--color-inverse-on-surface); }
+  .text-on-error { color: var(--color-on-error); }
+  .bg-surface-container-low { background-color: var(--color-surface-container-low); }
+  .text-on-primary-container { color: var(--color-on-primary-container); }
+  .text-primary-fixed-dim { color: var(--color-primary-fixed-dim); }
+  .text-on-tertiary-fixed-variant { color: var(--color-on-tertiary-fixed-variant); }
+  .bg-primary-fixed { background-color: var(--color-primary-fixed); }
+  .bg-tertiary-fixed { background-color: var(--color-tertiary-fixed); }
+  .bg-surface-container-lowest { background-color: var(--color-surface-container-lowest); }
+  .text-on-tertiary-fixed { color: var(--color-on-tertiary-fixed); }
+  .bg-tertiary-container { background-color: var(--color-tertiary-container); }
+  .bg-secondary-fixed { background-color: var(--color-secondary-fixed); }
+  .bg-surface-bright { background-color: var(--color-surface-bright); }
+  .bg-surface-dim { background-color: var(--color-surface-dim); }
+  .text-on-background { color: var(--color-on-background); }
+  .bg-error-container { background-color: var(--color-error-container); }
+  .bg-surface-container-highest { background-color: var(--color-surface-container-highest); }
+  .bg-inverse-surface { background-color: var(--color-inverse-surface); }
+  .text-on-secondary-fixed-variant { color: var(--color-on-secondary-fixed-variant); }
+  .text-on-surface-variant { color: var(--color-on-surface-variant); }
+  .text-on-error-container { color: var(--color-on-error-container); }
+  .text-primary { color: var(--color-primary); }
+  .bg-surface { background-color: var(--color-surface); }
+  .bg-background { background-color: var(--color-background); }
+  .text-on-secondary-fixed { color: var(--color-on-secondary-fixed); }
+  .text-on-surface { color: var(--color-on-surface); }
+  .text-on-secondary { color: var(--color-on-secondary); }
+  .bg-surface-container { background-color: var(--color-surface-container); }
+}

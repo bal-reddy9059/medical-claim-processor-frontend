@@ -40,6 +40,7 @@ A React frontend for a medical claim processing workflow. This app interfaces wi
 
 ## Deployment to Vercel
 
+### Frontend Deployment
 1. Install Vercel CLI globally:
    ```bash
    npm install -g vercel
@@ -52,7 +53,52 @@ A React frontend for a medical claim processing workflow. This app interfaces wi
 
    Follow the prompts to link your Vercel account, select the project, and deploy.
 
-3. For production, ensure your backend API is deployed separately and update the `VITE_API_BASE_URL` in your Vercel environment variables.
+### Backend Deployment
+Deploy your FastAPI backend (claim-processing-langgraph) to Vercel:
+1. Go to your backend repo: https://github.com/bal-reddy9059/claim-processing-langgraph.git
+2. Connect to Vercel and deploy as a Python project.
+3. Note the backend URL (e.g., https://claim-processing-langgraph.vercel.app)
+
+### Connecting Frontend and Backend
+
+1. **Get Your Backend URL**
+   Go to your claim-processing-langgraph Vercel project → click Visit to get the URL (e.g., https://claim-processing-langgraph.vercel.app)
+
+2. **Add Environment Variable in Frontend**
+   Go to your frontend project on Vercel → Settings → Environment Variables
+   Add:
+   - Name: `VITE_API_BASE_URL`
+   - Value: `https://claim-processing-langgraph.vercel.app` (your backend URL)
+
+3. **Fix CORS in Your Backend**
+   In your FastAPI backend, add CORS middleware:
+   ```python
+   from fastapi.middleware.cors import CORSMiddleware
+
+   app.add_middleware(
+       CORSMiddleware,
+       allow_origins=[
+           "https://medical-claim-processor-frontend.vercel.app",
+           "http://localhost:3000"  # for local dev
+       ],
+       allow_credentials=True,
+       allow_methods=["*"],
+       allow_headers=["*"],
+   )
+   ```
+
+4. **Redeploy Frontend**
+   After adding the env variable, push a new commit or redeploy from Vercel dashboard.
+
+5. **Test the Connection**
+   Open browser DevTools → Network tab → trigger an action in your frontend and verify API calls are hitting your backend URL.
+
+**Quick checklist:**
+- ✅ Backend URL copied from Vercel
+- ✅ VITE_API_BASE_URL set in frontend env vars
+- ✅ CORS configured in backend with frontend domain
+- ✅ Frontend redeployed
+- ✅ API calls working in browser network tab
 
 ## Available Scripts
 

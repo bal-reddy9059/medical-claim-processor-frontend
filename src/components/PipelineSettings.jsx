@@ -1,8 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { getSettings, updateSettings } from '../api/claimApi';
 
 const PipelineSettings = () => {
-  const [settings, setSettings] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
@@ -20,7 +19,6 @@ const PipelineSettings = () => {
     try {
       setLoading(true);
       const result = await getSettings();
-      setSettings(result);
       setApiUrl(result?.api_url || 'https://claim-processing-langgraph.vercel.app/api/process');
       setStrictValidation(result?.strict_validation ?? true);
       setConfidenceThreshold(result?.confidence_threshold ?? 85);
@@ -43,7 +41,6 @@ const PipelineSettings = () => {
         anomaly_detection: anomalyDetection,
       };
       await updateSettings(newSettings);
-      setSettings(newSettings);
       setSuccessMessage('Settings saved successfully!');
       setTimeout(() => setSuccessMessage(null), 3000);
     } catch (err) {
@@ -187,7 +184,7 @@ const PipelineSettings = () => {
                 </div>
                 <div className="p-4 bg-surface-container-low rounded-xl flex items-start gap-4">
                   <span className="material-symbols-outlined text-tertiary mt-1">info</span>
-                  <p className="text-xs text-on-surface-variant leading-relaxed">Changes to the API URL require a re-authentication of your organization's security certificate. This may cause a brief interruption in service.</p>
+                  <p className="text-xs text-on-surface-variant leading-relaxed">Changes to the API URL require a re-authentication of your organization&apos;s security certificate. This may cause a brief interruption in service.</p>
                 </div>
               </div>
             </section>

@@ -1,20 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import PropTypes from 'prop-types';
 import { getPipelineStatus, pausePipeline, restartPipeline, getPipelineLogs } from '../api/claimApi';
 
 const ClaimPrecisionMedicalBillingPipeline = ({ claimId }) => {
   const [currentClaimId, setCurrentClaimId] = useState(() => claimId || localStorage.getItem('lastClaimId') || '');
   const [claimInput, setClaimInput] = useState(currentClaimId);
   const [status, setStatus] = useState(null);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [actionLoading, setActionLoading] = useState(null); // 'pause' or 'restart'
   const [successMessage, setSuccessMessage] = useState(null);
   const [logs, setLogs] = useState([]);
-  const [logsLoading, setLogsLoading] = useState(false);
 
   useEffect(() => {
     if (!currentClaimId) {
-      setLoading(false);
       return;
     }
     loadPipelineStatus();
@@ -24,12 +22,11 @@ const ClaimPrecisionMedicalBillingPipeline = ({ claimId }) => {
       loadPipelineLogs();
     }, 5000); // Poll every 5 seconds
     return () => clearInterval(interval);
-  }, [currentClaimId]);
+  }, [currentClaimId, loadPipelineStatus, loadPipelineLogs]);
 
-  const loadPipelineStatus = async () => {
+  const loadPipelineStatus = useCallback(async () => {
     if (!currentClaimId) {
       setStatus(null);
-      setLoading(false);
       return;
     }
     try {
@@ -38,27 +35,22 @@ const ClaimPrecisionMedicalBillingPipeline = ({ claimId }) => {
       setError(null);
     } catch (err) {
       setError(err.message);
-    } finally {
-      setLoading(false);
     }
-  };
+  }, [currentClaimId]);
 
-  const loadPipelineLogs = async () => {
+  const loadPipelineLogs = useCallback(async () => {
     if (!currentClaimId) {
       setLogs([]);
       return;
     }
     try {
-      setLogsLoading(true);
       const result = await getPipelineLogs(currentClaimId);
       setLogs(result || []);
     } catch (err) {
       console.error('Failed to load pipeline logs:', err);
       setLogs([]);
-    } finally {
-      setLogsLoading(false);
     }
-  };
+  }, [currentClaimId]);
 
   const handleClaimSelect = () => {
     const id = claimInput.trim();
@@ -108,7 +100,6 @@ const ClaimPrecisionMedicalBillingPipeline = ({ claimId }) => {
     }
   };
 
-  const nodeStatus = status?.nodes || [];
   const confidence = status?.confidence || 98.4;
   const claimName = currentClaimId || 'unknown';
   const tokens = status?.tokens || 4129;
@@ -303,8 +294,8 @@ const ClaimPrecisionMedicalBillingPipeline = ({ claimId }) => {
                 ) : (
                   <>
                     <div className="flex gap-2"><span className="text-primary font-bold">[14:02:11]</span> <span>Classification complete: 4 types found.</span></div>
-                    <div className="flex gap-2"><span className="text-primary font-bold">[14:02:12]</span> <span>Invoking 'ID Agent' via Llama-3-70B.</span></div>
-                    <div className="flex gap-2"><span className="text-tertiary font-bold">[14:02:15]</span> <span>Parallelizing extraction branches...</span></div>
+                    <div className="flex gap-2"><span className="text-primary font-bold">[14:02:12]</span> <span>Invoking &apos;ID Agent&apos; via Llama-3-70B.</span></div>
+                    <div className="flex gap-2"><span className="text-tertiary font-bold">[14:02:15]</span> <span>Parallelizing extraction branches&hellip;</span></div>
                   </>
                 )}
               </div>
@@ -336,6 +327,10 @@ const ClaimPrecisionMedicalBillingPipeline = ({ claimId }) => {
       </nav>
     </div>
   );
+};
+
+ClaimPrecisionMedicalBillingPipeline.propTypes = {
+  claimId: PropTypes.string,
 };
 
 export default ClaimPrecisionMedicalBillingPipeline;

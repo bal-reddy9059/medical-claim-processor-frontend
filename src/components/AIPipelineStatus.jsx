@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { getHealth, getWorkflowInfo } from '../api/claimApi';
 
 const AIPipelineStatus = () => {
@@ -27,7 +27,6 @@ const AIPipelineStatus = () => {
 
   const workflowName = workflow?.title || workflow?.name || workflow?.workflow || 'Claim workflow';
   const workflowNodes = workflow?.count ?? workflow?.steps?.length ?? (workflow?.nodes ? Object.keys(workflow.nodes).length : null) ?? 'N/A';
-  const workflowFlow = workflow?.flow;
   const documentTypes = workflow?.document_types || [];
   const parallelism = workflow?.parallelism;
 
@@ -215,8 +214,8 @@ const AIPipelineStatus = () => {
               <p className="text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-2">Live Logs</p>
               <div className="space-y-1 font-mono text-xs text-on-surface-variant">
                 <div className="flex gap-2"><span className="text-primary font-bold">[14:02:11]</span> <span>Classification complete: 4 types found.</span></div>
-                <div className="flex gap-2"><span className="text-primary font-bold">[14:02:12]</span> <span>Invoking 'ID Agent' via Llama-3-70B.</span></div>
-                <div className="flex gap-2"><span className="text-tertiary font-bold">[14:02:15]</span> <span>Parallelizing extraction branches...</span></div>
+                <div className="flex gap-2"><span className="text-primary font-bold">[14:02:12]</span> <span>Invoking &apos;ID Agent&apos; via Llama-3-70B.</span></div>
+                <div className="flex gap-2"><span className="text-tertiary font-bold">[14:02:15]</span> <span>Parallelizing extraction branches&hellip;</span></div>
               </div>
             </div>
             <div className="absolute right-0 bottom-0 opacity-10 translate-x-4 translate-y-4">

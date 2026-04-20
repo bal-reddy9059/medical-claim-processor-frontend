@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 import {
   getClaimDetails,
   getExtractionResults,
@@ -27,7 +27,6 @@ const ReviewExtractionResults = () => {
 
   useEffect(() => {
     loadClaimData(claimId);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [claimId]);
 
   const loadClaimData = async (id) => {
@@ -129,14 +128,6 @@ const ReviewExtractionResults = () => {
     );
   }
 
-  const patientName = extractionData?.patient_name || claimDetails?.patient_name || 'Benjamin S. Whittaker';
-  const dateOfBirth = extractionData?.date_of_birth || claimDetails?.date_of_birth || 'Oct 14, 1978';
-  const policyNumber = extractionData?.policy_number || claimDetails?.policy_number || 'HX-992-004-PRM';
-  const diagnosis = extractionData?.diagnosis || 'J44.9';
-  const admissionDate = extractionData?.admission_date || 'Jan 12, 2024';
-  const dischargeDate = extractionData?.discharge_date || 'Jan 15, 2024';
-  const charges = extractionData?.charges || [];
-  const totalAmount = extractionData?.total_amount || 1118.0;
   const status = claimDetails?.status || 'Processed & Validated';
   const updatedAt = claimDetails?.updated_at || 'Just now';
   const documentTypes = documentBreakdown?.document_types || [];

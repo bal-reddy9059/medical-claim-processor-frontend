@@ -10,41 +10,84 @@ import {
 } from '../api/claimApi';
 
 const ReviewExtractionResults = () => {
-  const initialClaimId = typeof window !== 'undefined' ? localStorage.getItem('lastClaimId') || 'CLM-882941-X' : 'CLM-882941-X';
+  const initialClaimId = typeof window !== 'undefined' ? localStorage.getItem('lastClaimId') || '' : '';
   const [claimId, setClaimId] = useState(initialClaimId);
   const [lookupId, setLookupId] = useState(initialClaimId);
   const [claimDetails, setClaimDetails] = useState(null);
   const [extractionData, setExtractionData] = useState(null);
   const [documentBreakdown, setDocumentBreakdown] = useState(null);
   const [claimHistory, setClaimHistory] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [approving, setApproving] = useState(false);
   const [exporting, setExporting] = useState(false);
   const [editingField, setEditingField] = useState(null);
   const [fieldValue, setFieldValue] = useState('');
   const [successMessage, setSuccessMessage] = useState(null);
+  const [claimNotFound, setClaimNotFound] = useState(false);
 
   useEffect(() => {
-    loadClaimData(claimId);
+    if (claimId) {
+      loadClaimData(claimId);
+    } else {
+      // Reset state when no claim ID
+      setClaimDetails(null);
+      setExtractionData(null);
+      setDocumentBreakdown(null);
+      setClaimHistory([]);
+      setError(null);
+      setClaimNotFound(false);
+    }
   }, [claimId]);
 
   const loadClaimData = async (id) => {
     try {
       setLoading(true);
       setError(null);
-      const [details, extraction, breakdown, history] = await Promise.all([
-        getClaimDetails(id),
-        getExtractionResults(id),
-        getDocumentBreakdown(id),
-        getClaimHistory(id).catch(() => []), // History might not be available for all claims
-      ]);
+      setClaimNotFound(false);
+
+      // First, try to get claim details - this is the primary check
+      const details = await getClaimDetails(id);
       setClaimDetails(details);
-      setExtractionData(extraction);
-      setDocumentBreakdown(breakdown);
-      setClaimHistory(history);
+
+      // If claim exists, load additional data with individual error handling
+      try {
+        const extraction = await getExtractionResults(id);
+        setExtractionData(extraction);
+      } catch (extractionErr) {
+        console.warn('Extraction results not available:', extractionErr.message);
+        setExtractionData(null); // Set to null instead of failing
+      }
+
+      try {
+        const breakdown = await getDocumentBreakdown(id);
+        setDocumentBreakdown(breakdown);
+      } catch (breakdownErr) {
+        console.warn('Document breakdown not available:', breakdownErr.message);
+        setDocumentBreakdown(null); // Set to null instead of failing
+      }
+
+      try {
+        const history = await getClaimHistory(id);
+        setClaimHistory(history || []);
+      } catch (historyErr) {
+        console.warn('Claim history not available:', historyErr.message);
+        setClaimHistory([]); // Set to empty array instead of failing
+      }
+
     } catch (err) {
-      setError(err.message || 'Unable to load claim data');
+      console.error('Failed to load claim:', err);
+      if (err.message.includes('404') || err.message.includes('not found')) {
+        setClaimNotFound(true);
+        setError('Claim not found. Please initialize a claim first.');
+      } else {
+        setError(err.message || 'Unable to load claim data');
+      }
+      // Reset all data on error
+      setClaimDetails(null);
+      setExtractionData(null);
+      setDocumentBreakdown(null);
+      setClaimHistory([]);
     } finally {
       setLoading(false);
     }
@@ -128,6 +171,40 @@ const ReviewExtractionResults = () => {
     );
   }
 
+  // Show empty state when no claim is loaded
+  if (!claimId) {
+    return (
+      <div className="bg-surface text-on-surface min-h-screen flex items-center justify-center">
+        <div className="text-center max-w-md mx-auto px-6">
+          <div className="w-16 h-16 bg-surface-container-low rounded-full flex items-center justify-center mx-auto mb-6">
+            <span className="material-symbols-outlined text-3xl text-on-surface-variant">search</span>
+          </div>
+          <h2 className="text-2xl font-bold text-on-surface mb-2">Review Extraction Results</h2>
+          <p className="text-on-surface-variant mb-6">Enter a Claim ID and click Load to view results.</p>
+          <div className="space-y-4">
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={lookupId}
+                onChange={(e) => setLookupId(e.target.value)}
+                placeholder="Enter Claim ID (e.g., CLM-123456-X)"
+                className="flex-1 px-4 py-3 bg-surface-container-low border border-outline rounded-xl text-on-surface placeholder-on-surface-variant focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"
+                onKeyPress={(e) => e.key === 'Enter' && handleClaimLookup()}
+              />
+              <button
+                onClick={handleClaimLookup}
+                disabled={!lookupId.trim()}
+                className="px-6 py-3 bg-primary text-on-primary rounded-xl font-medium hover:bg-primary-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              >
+                Load
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   const status = claimDetails?.status || 'Processed & Validated';
   const updatedAt = claimDetails?.updated_at || 'Just now';
   const documentTypes = documentBreakdown?.document_types || [];
@@ -173,14 +250,14 @@ const ReviewExtractionResults = () => {
             </div>
             <button
               onClick={handleExport}
-              disabled={exporting}
+              disabled={exporting || claimNotFound}
               className="rounded-full bg-surface-container-low px-5 py-3 text-sm font-bold uppercase tracking-widest text-on-surface hover:bg-surface-container-high disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {exporting ? 'Exporting...' : 'Export PDF'}
             </button>
             <button
               onClick={handleApprove}
-              disabled={approving}
+              disabled={approving || claimNotFound}
               className="rounded-full bg-gradient-to-br from-primary to-primary-container px-5 py-3 text-sm font-bold uppercase tracking-widest text-white shadow-sm hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {approving ? 'Approving...' : 'Approve Claim'}

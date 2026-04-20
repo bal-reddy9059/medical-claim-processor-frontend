@@ -10,6 +10,7 @@ export default ({ mode }) => {
   return defineConfig({
     plugins: [react()],
     build: {
+      target: 'es2015',
       rollupOptions: {
         onwarn(warning, warn) {
           if (warning.code === 'UNUSED_EXTERNAL_IMPORT') return

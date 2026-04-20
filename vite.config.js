@@ -9,6 +9,14 @@ export default ({ mode }) => {
 
   return defineConfig({
     plugins: [react()],
+    build: {
+      rollupOptions: {
+        onwarn(warning, warn) {
+          if (warning.code === 'UNUSED_EXTERNAL_IMPORT') return
+          warn(warning)
+        },
+      },
+    },
     server: {
       port: 5173,
       strictPort: false,

@@ -1,4 +1,7 @@
-const apiBase = (import.meta.env.VITE_API_BASE_URL || import.meta.env.NEXT_PUBLIC_API_URL || 'https://claim-processing-langgraph.vercel.app').replace(/\/$/, '');
+const apiBase = (
+  import.meta.env.VITE_API_BASE_URL ||
+  'https://claim-processing-langgraph.vercel.app'
+).replace(/\/$/, '');
 const buildUrl = (path) => (apiBase ? `${apiBase}${path}` : path);
 
 const parseResponse = async (res) => {

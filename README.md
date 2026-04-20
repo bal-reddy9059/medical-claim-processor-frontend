@@ -78,7 +78,7 @@ Deploy your FastAPI backend (claim-processing-langgraph) to Vercel:
    app.add_middleware(
        CORSMiddleware,
        allow_origins=[
-           "https://medical-claim-processor-frontend.vercel.app",
+           "https://stitchmultiagentclaimprocessingpipeline-7w3imtmse.vercel.app",  # deployed frontend
            "http://localhost:3000"  # for local dev
        ],
        allow_credentials=True,

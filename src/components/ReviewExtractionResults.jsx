@@ -1,4 +1,4 @@
-﻿import { useRef, useState } from 'react';
+﻿import { useEffect, useRef, useState } from 'react';
 import {
   getClaimDetails,
   getExtractionResults,
@@ -11,7 +11,7 @@ import {
 
 const ReviewExtractionResults = () => {
   const [claimId, setClaimId] = useState('');
-  const [lookupId, setLookupId] = useState('');
+  const [lookupId, setLookupId] = useState(() => localStorage.getItem('lastClaimId') || '');
   const [claimDetails, setClaimDetails] = useState(null);
   const [extractionData, setExtractionData] = useState(null);
   const [documentBreakdown, setDocumentBreakdown] = useState(null);
@@ -26,6 +26,43 @@ const ReviewExtractionResults = () => {
   const [claimNotFound, setClaimNotFound] = useState(false);
   const fetchInProgressRef = useRef(false);
 
+  useEffect(() => {
+    if (lookupId) {
+      loadClaimData(lookupId);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const unwrapResult = (data) => {
+    if (data && typeof data === 'object' && 'result' in data && data.result !== undefined) {
+      return data.result ?? data;
+    }
+    return data;
+  };
+
+  const getExtractionField = (field) => {
+    if (!extractionData) return undefined;
+    if (Object.prototype.hasOwnProperty.call(extractionData, field)) {
+      return extractionData[field];
+    }
+    for (const sectionKey of Object.keys(extractionData)) {
+      const section = extractionData[sectionKey];
+      if (section && typeof section === 'object' && Object.prototype.hasOwnProperty.call(section, field)) {
+        return section[field];
+      }
+    }
+    return undefined;
+  };
+
+  const getExtractionFieldCount = () => {
+    if (!extractionData || typeof extractionData !== 'object') return 0;
+    return Object.values(extractionData).reduce((count, value) => {
+      if (value && typeof value === 'object' && !Array.isArray(value)) {
+        return count + Object.keys(value).length;
+      }
+      return count + 1;
+    }, 0);
+  };
 
   const loadClaimData = async (id) => {
     if (fetchInProgressRef.current) {
@@ -38,36 +75,36 @@ const ReviewExtractionResults = () => {
     setClaimNotFound(false);
 
     try {
-      const details = await getClaimDetails(id);
-      setClaimDetails(details);
-      setClaimId(id);
+      // First, load claim details
+      let claimDetails = null;
+      try {
+        const detailsRes = await getClaimDetails(id);
+        if (detailsRes) {
+          claimDetails = unwrapResult(detailsRes);
+        }
+      } catch (err) {
+        throw err; // Claim details must exist
+      }
 
+      // If claim exists, load optional data (extraction, breakdown, history)
+      setClaimId(id);
+      localStorage.setItem('lastClaimId', id);
+      setClaimDetails(claimDetails);
+
+      // Load optional endpoints in parallel
       const [extractionRes, breakdownRes, historyRes] = await Promise.allSettled([
-        getExtractionResults(id),
-        getDocumentBreakdown(id),
-        getClaimHistory(id),
+        getExtractionResults(id).catch(() => null),
+        getDocumentBreakdown(id).catch(() => null),
+        getClaimHistory(id).catch(() => null),
       ]);
 
-      if (extractionRes.status === 'fulfilled') {
-        setExtractionData(extractionRes.value);
-      } else {
-        console.warn('Extraction results not available:', extractionRes.reason?.message || extractionRes.reason);
-        setExtractionData(null);
-      }
+      const extraction = extractionRes.status === 'fulfilled' ? unwrapResult(extractionRes.value) : null;
+      const breakdown = breakdownRes.status === 'fulfilled' ? unwrapResult(breakdownRes.value) : null;
+      const history = historyRes.status === 'fulfilled' ? unwrapResult(historyRes.value) : null;
 
-      if (breakdownRes.status === 'fulfilled') {
-        setDocumentBreakdown(breakdownRes.value);
-      } else {
-        console.warn('Document breakdown not available:', breakdownRes.reason?.message || breakdownRes.reason);
-        setDocumentBreakdown(null);
-      }
-
-      if (historyRes.status === 'fulfilled') {
-        setClaimHistory(historyRes.value || []);
-      } else {
-        console.warn('Claim history not available:', historyRes.reason?.message || historyRes.reason);
-        setClaimHistory([]);
-      }
+      setExtractionData(extraction?.extracted_data ?? extraction);
+      setDocumentBreakdown(breakdown);
+      setClaimHistory(history || []);
     } catch (err) {
       console.error('Failed to load claim:', err);
       if (err.message?.includes('404') || err.message?.includes('not found')) {
@@ -203,6 +240,8 @@ const ReviewExtractionResults = () => {
   const updatedAt = claimDetails?.updated_at || 'Just now';
   const documentTypes = documentBreakdown?.document_types || [];
   const pageTypes = documentBreakdown?.pages_by_type || {};
+  const extractionFieldCount = getExtractionFieldCount();
+  const getSummaryValue = (field) => getExtractionField(field) ?? claimDetails?.[field] ?? 'N/A';
 
   return (
     <div className="bg-surface text-on-surface selection:bg-primary-fixed selection:text-on-primary-fixed">
@@ -289,23 +328,26 @@ const ReviewExtractionResults = () => {
           <div className="rounded-3xl bg-surface-container-lowest p-6 shadow-sm lg:col-span-2">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xs font-black uppercase tracking-[0.2em] text-on-surface-variant">Extraction Snapshot</h2>
-              <span className="text-xs uppercase tracking-[0.15em] text-on-surface-variant">{Object.keys(extractionData || {}).length} fields</span>
+              <span className="text-xs uppercase tracking-[0.15em] text-on-surface-variant">{extractionFieldCount} fields</span>
             </div>
             <div className="grid gap-4 md:grid-cols-2">
-              {['patient_name','date_of_birth','policy_number','diagnosis','admission_date','discharge_date'].map((field) => (
-                <div key={field} className="rounded-2xl bg-surface-container-high px-4 py-4">
-                  <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-on-surface-variant mb-2">{field.replace(/_/g, ' ')}</p>
-                      <p className="text-sm text-on-surface">{extractionData?.[field] || claimDetails?.[field] || 'N/A'}</p>
+              {['patient_name','date_of_birth','policy_number','diagnosis','admission_date','discharge_date'].map((field) => {
+                const value = getSummaryValue(field);
+                return (
+                  <div key={field} className="rounded-2xl bg-surface-container-high px-4 py-4">
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-on-surface-variant mb-2">{field.replace(/_/g, ' ')}</p>
+                        <p className="text-sm text-on-surface">{typeof value === 'object' ? JSON.stringify(value) : value}</p>
+                      </div>
+                      <button
+                        onClick={() => handleFieldEdit(field, typeof value === 'object' ? JSON.stringify(value) : value || '')}
+                        className="text-primary text-sm font-semibold"
+                      >Edit</button>
                     </div>
-                    <button
-                      onClick={() => handleFieldEdit(field, extractionData?.[field] || claimDetails?.[field] || '')}
-                      className="text-primary text-sm font-semibold"
-                    >Edit</button>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
             {editingField && (
               <div className="mt-6 rounded-2xl bg-surface-container-lowest p-5 border border-primary/20">
@@ -346,7 +388,7 @@ const ReviewExtractionResults = () => {
           <div className="rounded-3xl bg-surface-container-lowest p-6 shadow-sm lg:col-span-2">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xs font-black uppercase tracking-[0.2em] text-on-surface-variant">Extracted Claim Data</h2>
-              <span className="text-[10px] uppercase tracking-[0.15em] text-on-surface-variant">JSON preview</span>
+              <span className="text-xs uppercase tracking-[0.15em] text-on-surface-variant">JSON preview</span>
             </div>
             <pre className="rounded-2xl bg-surface-container-high p-4 text-xs leading-relaxed text-on-surface overflow-x-auto">{JSON.stringify(extractionData || {}, null, 2)}</pre>
           </div>

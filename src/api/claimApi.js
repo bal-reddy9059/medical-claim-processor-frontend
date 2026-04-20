@@ -13,6 +13,28 @@ const parseResponse = async (res) => {
       data?.message ||
       data?.detail ||
       (typeof data === 'string' ? data : JSON.stringify(data));
+
+    throw new Error(message || `Request failed with status ${res.status}`);
+  }
+
+  return data;
+};
+
+const parseResponseGraceful404 = async (res) => {
+  const contentType = res.headers.get('content-type') || '';
+  const data = contentType.includes('application/json') ? await res.json() : await res.text();
+
+  if (!res.ok) {
+    // For 404s on optional data, return null instead of throwing
+    if (res.status === 404) {
+      return null;
+    }
+
+    const message =
+      data?.message ||
+      data?.detail ||
+      (typeof data === 'string' ? data : JSON.stringify(data));
+
     throw new Error(message || `Request failed with status ${res.status}`);
   }
 
@@ -45,11 +67,7 @@ export async function processClaim(claimId, file) {
     body: formData,
   });
 
-  if (!response.ok) {
-    throw new Error(`Request failed with status ${response.status}`);
-  }
-
-  return response.json();
+  return parseResponse(response);
 }
 
 // ==================== CLAIM MANAGEMENT ====================
@@ -61,7 +79,7 @@ export async function getClaimDetails(claimId) {
 
 export async function getExtractionResults(claimId) {
   const res = await fetch(buildUrl(`/api/claims/${claimId}/extraction-results`));
-  return parseResponse(res);
+  return parseResponseGraceful404(res);
 }
 
 export async function updateExtractionResults(claimId, data) {
@@ -75,7 +93,7 @@ export async function updateExtractionResults(claimId, data) {
 
 export async function getDocumentBreakdown(claimId) {
   const res = await fetch(buildUrl(`/api/claims/${claimId}/document-breakdown`));
-  return parseResponse(res);
+  return parseResponseGraceful404(res);
 }
 
 export async function getClaimsSummary() {
@@ -90,7 +108,7 @@ export async function getAllClaims() {
 
 export async function getClaimHistory(claimId) {
   const res = await fetch(buildUrl(`/api/claims/${claimId}/history`));
-  return parseResponse(res);
+  return parseResponseGraceful404(res);
 }
 
 export async function getDashboardMetrics() {

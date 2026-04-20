@@ -19,6 +19,22 @@ const parseResponse = async (res) => {
   return data;
 };
 
+const fileToBase64 = async (file) => {
+  if (!file) return null;
+  if (typeof file === 'string') return file;
+
+  const arrayBuffer = await file.arrayBuffer();
+  const bytes = new Uint8Array(arrayBuffer);
+  let binary = '';
+  const chunkSize = 0x8000;
+
+  for (let i = 0; i < bytes.length; i += chunkSize) {
+    binary += String.fromCharCode(...bytes.subarray(i, i + chunkSize));
+  }
+
+  return `data:${file.type || 'application/octet-stream'};base64,${btoa(binary)}`;
+};
+
 // ==================== HEALTH & INFO ====================
 
 export async function getHealth() {
@@ -34,12 +50,16 @@ export async function getWorkflowInfo() {
 // ==================== CLAIM PROCESSING ====================
 
 export async function processClaim(claimId, file) {
-  const formData = new FormData();
-  formData.append('file', file);
-  
-  const res = await fetch(buildUrl(`/api/process?claim_id=${encodeURIComponent(claimId)}`), {
+  const fileData = await fileToBase64(file);
+  const payload = {
+    claim_id: claimId,
+    file: fileData,
+  };
+
+  const res = await fetch(buildUrl('/api/process'), {
     method: 'POST',
-    body: formData,
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
   });
   return parseResponse(res);
 }

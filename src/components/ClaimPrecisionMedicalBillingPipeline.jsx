@@ -5,11 +5,39 @@ import { getPipelineStatus, pausePipeline, restartPipeline, getPipelineLogs } fr
 const ClaimPrecisionMedicalBillingPipeline = ({ claimId }) => {
   const [currentClaimId, setCurrentClaimId] = useState(() => claimId || localStorage.getItem('lastClaimId') || '');
   const [claimInput, setClaimInput] = useState(currentClaimId);
-  const [status, setStatus] = useState(null);
+  const [status, setStatus] = useState({});
   const [error, setError] = useState(null);
   const [actionLoading, setActionLoading] = useState(null); // 'pause' or 'restart'
   const [successMessage, setSuccessMessage] = useState(null);
   const [logs, setLogs] = useState([]);
+
+  const loadPipelineStatus = useCallback(async () => {
+    if (!currentClaimId) {
+      setStatus({});
+      return;
+    }
+    try {
+      const result = await getPipelineStatus(currentClaimId);
+      setStatus(result || {});
+      setError(null);
+    } catch (err) {
+      setError(err?.message || 'Failed to load status');
+    }
+  }, [currentClaimId]);
+
+  const loadPipelineLogs = useCallback(async () => {
+    if (!currentClaimId) {
+      setLogs([]);
+      return;
+    }
+    try {
+      const result = await getPipelineLogs(currentClaimId);
+      setLogs(Array.isArray(result) ? result : []);
+    } catch (err) {
+      console.error('Failed to load pipeline logs:', err);
+      setLogs([]);
+    }
+  }, [currentClaimId]);
 
   useEffect(() => {
     if (!currentClaimId) {
@@ -23,34 +51,6 @@ const ClaimPrecisionMedicalBillingPipeline = ({ claimId }) => {
     }, 5000); // Poll every 5 seconds
     return () => clearInterval(interval);
   }, [currentClaimId, loadPipelineStatus, loadPipelineLogs]);
-
-  const loadPipelineStatus = useCallback(async () => {
-    if (!currentClaimId) {
-      setStatus(null);
-      return;
-    }
-    try {
-      const result = await getPipelineStatus(currentClaimId);
-      setStatus(result);
-      setError(null);
-    } catch (err) {
-      setError(err.message);
-    }
-  }, [currentClaimId]);
-
-  const loadPipelineLogs = useCallback(async () => {
-    if (!currentClaimId) {
-      setLogs([]);
-      return;
-    }
-    try {
-      const result = await getPipelineLogs(currentClaimId);
-      setLogs(result || []);
-    } catch (err) {
-      console.error('Failed to load pipeline logs:', err);
-      setLogs([]);
-    }
-  }, [currentClaimId]);
 
   const handleClaimSelect = () => {
     const id = claimInput.trim();
@@ -100,9 +100,9 @@ const ClaimPrecisionMedicalBillingPipeline = ({ claimId }) => {
     }
   };
 
-  const confidence = status?.confidence || 98.4;
+  const confidence = status?.confidence ?? 98.4;
   const claimName = currentClaimId || 'unknown';
-  const tokens = status?.tokens || 4129;
+  const tokens = status?.tokens ?? 4129;
 
   return (
     <div className="bg-surface font-body text-on-surface min-h-screen pb-20">
@@ -282,15 +282,21 @@ const ClaimPrecisionMedicalBillingPipeline = ({ claimId }) => {
             <div className="relative z-10">
               <p className="text-xs font-bold text-on-surface-variant uppercase tracking-widest mb-2">Live Logs</p>
               <div className="space-y-1 font-mono text-xs text-on-surface-variant">
-                {logs.length > 0 ? (
-                  logs.slice(0, 3).map((log, idx) => (
-                    <div key={idx} className="flex gap-2">
-                      <span className={`font-bold ${log.level === 'error' ? 'text-rose-500' : log.level === 'warning' ? 'text-tertiary' : 'text-primary'}`}>
-                        [{new Date(log.timestamp).toLocaleTimeString()}]
-                      </span>
-                      <span>{log.message}</span>
-                    </div>
-                  ))
+                {Array.isArray(logs) && logs.length > 0 ? (
+                  logs.slice(0, 3).map((log, idx) => {
+                    const level = log?.level || 'info';
+                    const message = log?.message || String(log || 'No details');
+                    const timestamp = log?.timestamp ? new Date(log.timestamp).toLocaleTimeString() : '00:00:00';
+
+                    return (
+                      <div key={idx} className="flex gap-2">
+                        <span className={`font-bold ${level === 'error' ? 'text-rose-500' : level === 'warning' ? 'text-tertiary' : 'text-primary'}`}>
+                          [{timestamp}]
+                        </span>
+                        <span>{message}</span>
+                      </div>
+                    );
+                  })
                 ) : (
                   <>
                     <div className="flex gap-2"><span className="text-primary font-bold">[14:02:11]</span> <span>Classification complete: 4 types found.</span></div>

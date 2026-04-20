@@ -7,7 +7,7 @@ const PipelineSettings = () => {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
-  const [apiUrl, setApiUrl] = useState('http://127.0.0.1:8000/api/process');
+  const [apiUrl, setApiUrl] = useState('https://claim-processing-langgraph.vercel.app/api/process');
   const [strictValidation, setStrictValidation] = useState(true);
   const [confidenceThreshold, setConfidenceThreshold] = useState(85);
   const [anomalyDetection, setAnomalyDetection] = useState(false);
@@ -21,7 +21,7 @@ const PipelineSettings = () => {
       setLoading(true);
       const result = await getSettings();
       setSettings(result);
-      setApiUrl(result?.api_url || 'http://127.0.0.1:8000/api/process');
+      setApiUrl(result?.api_url || 'https://claim-processing-langgraph.vercel.app/api/process');
       setStrictValidation(result?.strict_validation ?? true);
       setConfidenceThreshold(result?.confidence_threshold ?? 85);
       setAnomalyDetection(result?.anomaly_detection ?? false);
@@ -177,7 +177,7 @@ const PipelineSettings = () => {
                   <div className="relative">
                     <input 
                       className="w-full bg-surface-container-highest border-0 border-b-2 border-transparent focus:border-primary focus:ring-0 rounded-t-xl px-4 py-4 text-sm font-medium transition-all" 
-                      placeholder="http://127.0.0.1:8000/api/process" 
+                      placeholder="https://claim-processing-langgraph.vercel.app/api/process" 
                       type="text" 
                       value={apiUrl}
                       onChange={(e) => setApiUrl(e.target.value)}

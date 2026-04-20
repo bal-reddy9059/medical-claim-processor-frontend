@@ -4,7 +4,7 @@ import react from '@vitejs/plugin-react'
 // https://vitejs.dev/config/
 export default ({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
-  const backendUrl = env.VITE_API_BASE_URL || 'http://127.0.0.1:8000';
+  const backendUrl = env.VITE_API_BASE_URL || 'https://claim-processing-langgraph.vercel.app';
 
   return defineConfig({
     plugins: [react()],

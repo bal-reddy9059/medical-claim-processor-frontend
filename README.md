@@ -28,7 +28,7 @@ A React frontend for a medical claim processing workflow. This app interfaces wi
 
 2. Create or update `.env` with the backend API base URL:
    ```bash
-   VITE_API_BASE_URL=http://127.0.0.1:8000
+   VITE_API_BASE_URL=https://claim-processing-langgraph.vercel.app
    ```
 
 3. Start the frontend server:

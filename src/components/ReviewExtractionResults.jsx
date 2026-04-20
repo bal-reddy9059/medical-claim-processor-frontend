@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from 'react';
+﻿import { useRef, useState } from 'react';
 import {
   getClaimDetails,
   getExtractionResults,
@@ -10,9 +10,8 @@ import {
 } from '../api/claimApi';
 
 const ReviewExtractionResults = () => {
-  const initialClaimId = typeof window !== 'undefined' ? localStorage.getItem('lastClaimId') || '' : '';
-  const [claimId, setClaimId] = useState(initialClaimId);
-  const [lookupId, setLookupId] = useState(initialClaimId);
+  const [claimId, setClaimId] = useState('');
+  const [lookupId, setLookupId] = useState('');
   const [claimDetails, setClaimDetails] = useState(null);
   const [extractionData, setExtractionData] = useState(null);
   const [documentBreakdown, setDocumentBreakdown] = useState(null);
@@ -25,71 +24,66 @@ const ReviewExtractionResults = () => {
   const [fieldValue, setFieldValue] = useState('');
   const [successMessage, setSuccessMessage] = useState(null);
   const [claimNotFound, setClaimNotFound] = useState(false);
+  const fetchInProgressRef = useRef(false);
 
-  useEffect(() => {
-    if (claimId) {
-      loadClaimData(claimId);
-    } else {
-      // Reset state when no claim ID
-      setClaimDetails(null);
-      setExtractionData(null);
-      setDocumentBreakdown(null);
-      setClaimHistory([]);
-      setError(null);
-      setClaimNotFound(false);
-    }
-  }, [claimId]);
 
   const loadClaimData = async (id) => {
-    try {
-      setLoading(true);
-      setError(null);
-      setClaimNotFound(false);
+    if (fetchInProgressRef.current) {
+      return;
+    }
 
-      // First, try to get claim details - this is the primary check
+    fetchInProgressRef.current = true;
+    setLoading(true);
+    setError(null);
+    setClaimNotFound(false);
+
+    try {
       const details = await getClaimDetails(id);
       setClaimDetails(details);
+      setClaimId(id);
 
-      // If claim exists, load additional data with individual error handling
-      try {
-        const extraction = await getExtractionResults(id);
-        setExtractionData(extraction);
-      } catch (extractionErr) {
-        console.warn('Extraction results not available:', extractionErr.message);
-        setExtractionData(null); // Set to null instead of failing
+      const [extractionRes, breakdownRes, historyRes] = await Promise.allSettled([
+        getExtractionResults(id),
+        getDocumentBreakdown(id),
+        getClaimHistory(id),
+      ]);
+
+      if (extractionRes.status === 'fulfilled') {
+        setExtractionData(extractionRes.value);
+      } else {
+        console.warn('Extraction results not available:', extractionRes.reason?.message || extractionRes.reason);
+        setExtractionData(null);
       }
 
-      try {
-        const breakdown = await getDocumentBreakdown(id);
-        setDocumentBreakdown(breakdown);
-      } catch (breakdownErr) {
-        console.warn('Document breakdown not available:', breakdownErr.message);
-        setDocumentBreakdown(null); // Set to null instead of failing
+      if (breakdownRes.status === 'fulfilled') {
+        setDocumentBreakdown(breakdownRes.value);
+      } else {
+        console.warn('Document breakdown not available:', breakdownRes.reason?.message || breakdownRes.reason);
+        setDocumentBreakdown(null);
       }
 
-      try {
-        const history = await getClaimHistory(id);
-        setClaimHistory(history || []);
-      } catch (historyErr) {
-        console.warn('Claim history not available:', historyErr.message);
-        setClaimHistory([]); // Set to empty array instead of failing
+      if (historyRes.status === 'fulfilled') {
+        setClaimHistory(historyRes.value || []);
+      } else {
+        console.warn('Claim history not available:', historyRes.reason?.message || historyRes.reason);
+        setClaimHistory([]);
       }
-
     } catch (err) {
       console.error('Failed to load claim:', err);
-      if (err.message.includes('404') || err.message.includes('not found')) {
+      if (err.message?.includes('404') || err.message?.includes('not found')) {
         setClaimNotFound(true);
         setError('Claim not found. Please initialize a claim first.');
       } else {
         setError(err.message || 'Unable to load claim data');
       }
-      // Reset all data on error
       setClaimDetails(null);
       setExtractionData(null);
       setDocumentBreakdown(null);
       setClaimHistory([]);
+      setClaimId('');
     } finally {
       setLoading(false);
+      fetchInProgressRef.current = false;
     }
   };
 
@@ -99,8 +93,8 @@ const ReviewExtractionResults = () => {
       setError('Please enter a claim ID.');
       return;
     }
-    localStorage.setItem('lastClaimId', id);
-    setClaimId(id);
+
+    await loadClaimData(id);
   };
 
   const handleApprove = async () => {
@@ -193,7 +187,7 @@ const ReviewExtractionResults = () => {
               />
               <button
                 onClick={handleClaimLookup}
-                disabled={!lookupId.trim()}
+                disabled={loading || !lookupId.trim()}
                 className="px-6 py-3 bg-primary text-on-primary rounded-xl font-medium hover:bg-primary-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 Load
@@ -250,14 +244,14 @@ const ReviewExtractionResults = () => {
             </div>
             <button
               onClick={handleExport}
-              disabled={exporting || claimNotFound}
+              disabled={exporting || claimNotFound || !claimId}
               className="rounded-full bg-surface-container-low px-5 py-3 text-sm font-bold uppercase tracking-widest text-on-surface hover:bg-surface-container-high disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {exporting ? 'Exporting...' : 'Export PDF'}
             </button>
             <button
               onClick={handleApprove}
-              disabled={approving || claimNotFound}
+              disabled={approving || claimNotFound || !claimId}
               className="rounded-full bg-gradient-to-br from-primary to-primary-container px-5 py-3 text-sm font-bold uppercase tracking-widest text-white shadow-sm hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {approving ? 'Approving...' : 'Approve Claim'}

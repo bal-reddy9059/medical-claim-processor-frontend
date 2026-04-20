@@ -38,6 +38,22 @@ A React frontend for a medical claim processing workflow. This app interfaces wi
 
 4. Open the application in your browser at the port shown by Vite.
 
+## Deployment to Vercel
+
+1. Install Vercel CLI globally:
+   ```bash
+   npm install -g vercel
+   ```
+
+2. Deploy the project:
+   ```bash
+   vercel
+   ```
+
+   Follow the prompts to link your Vercel account, select the project, and deploy.
+
+3. For production, ensure your backend API is deployed separately and update the `VITE_API_BASE_URL` in your Vercel environment variables.
+
 ## Available Scripts
 
 - `npm run dev` — start the local development server
